@@ -1,0 +1,1771 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ENGLISH CBT EXAM </title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="favicon-32x32.png" type="image/png">
+    <script src="jspdf.umd.min.js"></script>
+    <script src="jspdf.plugin.autotable.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="login-page" id="loginPage">
+
+        <div id="loginScreen">
+            <div class="logo">
+                <img src="LOGO.png" alt="">
+                <h1>AL-QOSIMIYYAH MODEL SCHOOL</h1>
+            </div>
+            <marquee behavior="" direction="">SECOND TERM EXAMINATION 2025/2026 SESSION </marquee>
+            <p style="color:  #21abcd; font-size: 18px;">Enter your name, class and select your subject to start the
+                exam:</p>
+            <input type="text" id="studentName" placeholder="Enter Your Full Name" />
+            <input type="text" style="margin-top: 10px;" id="studentClass" placeholder="Enter Your Class" />
+            <select name="" id="subject" style="margin-top: 10px;">
+                <option value="">---SELECT SUBJECT---</option>
+                <option value="English-SS1">ENGLISH-SS1</option>
+                <option value="English-SS2-SS3">ENGLISH-SS2/SS3</option>
+            </select>
+            <button onclick="startExam()">Start Exam</button>
+        </div>
+    </div>
+
+    <div id="examScreen" class="hidden">
+        <div class="timer" id="timer"></div>
+        <!-- <h2></h2> -->
+        <!-- <p id="instruction" style="font-style:italic; color:#444;"></p> -->
+        <div id="questionContainer"></div>
+        <div id="questionNav" class="question-nav"></div>
+        <div style="text-align:center;">
+            <button onclick="prevQuestion()">Previous</button>
+            <button onclick="nextQuestion()">Next</button>
+            <button onclick="submitExam()"
+                style="margin-left: 100px; background-color: black ; color: white;">Submit</button>
+        </div>
+    </div>
+    <div id="resultScreen" class="hidden">
+        <h2>Exam Result</h2>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Class</th>
+                <th>Subject</th>
+                <th>Score</th>
+                <th>Percentage</th>
+            </tr>
+
+            <tr>
+                <td id="rName"></td>
+                <td id="rClass"></td>
+                <td id="rSubject"></td>
+                <td id="rScore"></td>
+                <td id="rPercent"></td>
+            </tr>
+        </table>
+        <p id="resultText"></p>
+        <button onclick="downloadPDF()">Download Result as PDF</button>
+    </div>
+
+    <div class="footer">
+        © 2026 Horlanif Tech. All Rights Reserved.
+    </div>
+
+    <!-- <div class="container">
+
+    </div> -->
+
+    <script>
+        const englishSs1Questions = [
+
+            // LEXIS
+
+            {
+                q: "Neither the principal nor the teachers _____ aware of the incident.",
+                options: ["was", "is", "were", "has"],
+                answer: 2
+            },
+            {
+                q: "The committee _____ divided in their opinions.",
+                options: ["is", "are", "was", "be"],
+                answer: 0
+            },
+            {
+                q: "Each of the students _____ submitted the assignment.",
+                options: ["have", "are", "has", "were"],
+                answer: 2
+            },
+            {
+                q: "The news _____ surprising to everyone.",
+                options: ["were", "are", "have", "was"],
+                answer: 3
+            },
+            {
+                q: "Bread and butter _____ my favourite breakfast.",
+                options: ["are", "were", "is", "have been"],
+                answer: 2
+            },
+            {
+                q: "A number of students _____ absent yesterday.",
+                options: ["was", "is", "were", "has been"],
+                answer: 0
+            },
+            {
+                q: "The number of candidates _____ increasing every year.",
+                options: ["are", "were", "have been", "is"],
+                answer: 0
+            },
+            {
+                q: "Mathematics _____ my best subject.",
+                options: ["are", "were", "is", "have"],
+                answer: 2
+            },
+            {
+                q: "One of the boys who _____ late has been punished.",
+                options: ["was", "were", "is", "has"],
+                answer: 1
+            },
+            {
+                q: "Either the players or the coach _____ responsible.",
+                options: ["are", "were", "is", "have"],
+                answer: 2
+            },
+            {
+                q: "Ten kilometres _____ a long distance to walk.",
+                options: ["are", "were", "is", "have"],
+                answer: 2
+            },
+            {
+                q: "The jury _____ giving its verdict now.",
+                options: ["is", "are", "were", "have"],
+                answer: 0
+            },
+            {
+                q: "No sooner _____ he arrived than it started raining.",
+                options: ["has", "had", "have", "was"],
+                answer: 0
+            },
+            {
+                q: "My trousers _____ torn at the knee.",
+                options: ["is", "was", "are", "has"],
+                answer: 0
+            },
+            {
+                q: "Everybody _____ expected to attend the meeting.",
+                options: ["are", "were", "have", "is"],
+                answer: 3
+            },
+
+            // REGISTER
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "She _____ finished her assignment before the teacher arrived.",
+                options: ["has", "have", "had", "having"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "The boys _____ already eaten their lunch.",
+                options: ["has", "have", "had", "having"],
+                answer: 2
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "Musa _____ been waiting for you since morning.",
+                options: ["has", "have", "had", "having"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "By this time yesterday, we _____ completed the examination.",
+                options: ["has", "have", "had", "having"],
+                answer: 2
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "Neither of the girls _____ submitted her project.",
+                options: ["has", "have", "had", "having"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "I _____ never seen such a beautiful sight before.",
+                options: ["has", "have", "had", "having"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "They _____ just left when the rain started.",
+                options: ["has", "have", "had", "having"],
+                answer: 2
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "The committee _____ decided to postpone the meeting.",
+                options: ["has", "have", "had", "having"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "He said he _____ finished the work before I came.",
+                options: ["has", "have", "had", "having"],
+                answer: 2
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "Each of the players _____ received a medal.",
+                options: ["has", "have", "had", "having"],
+                answer: 0
+            },
+
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "I need to ________ the rough edges of this table.",
+                options: ["smooth", "smoothen", "smoothy", "smoothed"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "He is a very ambitious young man; a total ________.",
+                options: ["goal getter", "go-getter", "gold getter", "go-get"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "We must ________ before it’s too late.",
+                options: ["turn back the clock", "turn back the hand of time", "reverse the clock", "turn the hand of the clock"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "She has been ill and has a ________.",
+                options: ["running nose", "runny nose", "runned nose", "runs nose"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "The church ________ gathered for the annual convention.",
+                options: ["faithfuls", "faithful", "faithfulls", "faith-folk"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "\"Upcoming\" is less preferred in formal English than ________.",
+                options: ["up and coming", "coming up", "near coming", "soon coming"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "Please ________ the two groups.",
+                options: ["seperate", "separate", "saperate", "sepereit"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "\"Fire for fire\" is a ________ of the correct idiom.",
+                options: ["Synonym", "Misuse", "Derivative", "Translation"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that best completes the sentence.",
+                q: "The term \"travelling bag\" is generally considered ________.",
+                options: ["Standard British English", "Informal or variety-specific", "The only correct form", "Archaic"],
+                answer: 3
+            },
+
+            // Spelled words
+            {
+                instruction: "Choose the correctly spelled word or the correct interpretation of the term.",
+                q: "Which of the following is the correct spelling?",
+                options: ["Pronounciation", "Pronunciation", "Prononciation", "Pronunciashon"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the correctly spelled word or the correct interpretation of the term.",
+                q: "Choose the correct spelling:",
+                options: ["Separate", "Seperat", "Separate", "Saparate"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the correctly spelled word or the correct interpretation of the term.",
+                q: "When you want to speak at length about a topic, you ________ on it.",
+                options: ["expatiate", "expatriate", "expiate", "expandiate"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the correctly spelled word or the correct interpretation of the term.",
+                q: "To increase the size or value of something is to ________ it.",
+                options: ["augument", "augment", "argument", "agument"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the correctly spelled word or the correct interpretation of the term.",
+                q: 'In the phrase "chit-chat," the focus is on:',
+                options: ["Important news", "Secret information", "Things that are not important", "Academic discussion"],
+                answer: 2
+            },
+            {
+                instruction: "Choose the correctly spelled word or the correct interpretation of the term.",
+                q: 'The word "gist" actually refers to:',
+                options: ["A casual conversation", "The most important part of something", "A funny story", "A long rumor"],
+                answer: 1
+            },
+
+
+            // VOWEL SOUND
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/i:/ (Long vowel): ',
+                options: ["Sit", "Beat", "Pet", "Foot"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/æ/ (Short vowel): ',
+                options: ["Father", "Cat", "Call", "Car"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/ɒ/ (Short vowel): ',
+                options: ["Pot", "Port", "Pooch", "Pear"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/u:/ (Long vowel): ',
+                options: ["Look", "Blue", "Blood", "Book"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/ɜ:/ (Long vowel): ',
+                options: ["Girl", "Get", "Gate", "Gap"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/ʌ/ (Short vowel): ',
+                options: ["Cup", "Cop", "Coop", "Cap"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/ɔ:/ (Long vowel): ',
+                options: ["Knot", "Caught", "Cot", "Cut"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/ɪ/ (Short vowel): ',
+                options: ["Feel", "Fill", "Fail", "File"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/ə/ (Schwa): ',
+                options: ["About", "Art", "Egg", "Eat"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the word that contains the vowel sound represented by the underlined letter(s).",
+                q: '/ɑ:/ (Long vowel): ',
+                options: ["Back", "Barn", "Ban", "Bat"],
+                answer: 1
+            },
+
+            // DIPHTONG
+
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/eɪ/: ',
+                options: ["Gate", "Get", "Got", "Gut"],
+                answer: 0
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/aɪ/: ',
+                options: ["Boy", "Buy", "Bee", "Bay"],
+                answer: 1
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/ɔɪ/:  ',
+                options: ["Oil", "Owl", "All", "Old"],
+                answer: 0
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/əʊ/: ',
+                options: ["Now", "Go", "Law", "Do"],
+                answer: 1
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/aʊ/: ',
+                options: ["House", "Horse", "Hose", "Whose"],
+                answer: 0
+            },
+
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/ɪə/:',
+                options: ["Dare", "Dear", "Deer", "Door"],
+                answer: 2
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/eə/: ',
+                options: ["Chair", "Cheer", "Choir", "Chore"],
+                answer: 0
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: '/ʊə/: ',
+                options: ["Pour", "Pure", "Peer", "Pair"],
+                answer: 1
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: 'Which of these is a diphthong? ',
+                options: ["/i:/ ", "/æ/", "/eɪ/ ", "/u:/"],
+                answer: 0
+            },
+            {
+                instruction: "Identify the word that contains the diphthong sound indicate(d)",
+                q: 'A diphthong is also known as a: ',
+                options: ["Pure vowel", "Vowel glide", "voalar", "veolar"],
+                answer: 1
+            },
+
+            // RHYMES
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Sigh:",
+                options: ["See", "Say", "Die", "Day"],
+                answer: 2
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "School:",
+                options: ["Full", "Pool", "Pull", "Soul"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Bread:",
+                options: ["Bead", "Said", "Seed", "Blade"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Caught:",
+                options: ["Cot", "Bought", "Coat", "Cut"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Weight:",
+                options: ["Height", "Fate", "White", "Wheat"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Rough:",
+                options: ["Cough", "Dough", "Tuff", "Though"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Bear:",
+                options: ["Beer", "Care", "Bar", "Burr"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Heard:",
+                options: ["Beard", "Bird", "Hard", "Hired"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Comb:",
+                options: ["Bomb", "Home", "Come", "Tomb"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the word that rhymes with the given wor(d)",
+                q: "Vase:",
+                options: ["Base", "Face", "Phase", "Pass"],
+                answer: 3
+            },
+
+            // STRESS PATTERN
+
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Teacher:",
+                options: ["tea-CHER", "TEA-cher", "TEACHER", "teachER"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Important:",
+                options: ["IM-por-tant", "im-POR-tant", "im-por-TANT"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Education:",
+                options: ["ed-u-ca-tion", "ed-u-CA-tion", "ED-u-ca-tion"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Refuse (Verb - to decline):",
+                options: ["re-FUSE", "RE-fuse", "REFUSE", "none"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Refuse (Noun - rubbish):",
+                options: ["re-FUSE", "RE-fuse", "REFUSE", "none"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Celebrate:",
+                options: ["cel-E-brate", "CEL-e-brate", "cel-e-BRATE"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Police:",
+                options: ["po-LICE", "PO-lice", "POLICE", "poliCE"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Banana:",
+                options: ["BA-na-na", "ba-NA-na", "ba-na-NA", "BANANA"],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Photograph:",
+                options: ["pho-TO-graph", "PHO-to-graph", "PHOTOGRAPH", "photograPH"],
+                answer: 1
+            },
+            {
+                instruction: "Choose the option that represents the correct stress pattern. (Capitalized syllables represent the stressed part).",
+                q: "Education:",
+                options: ["ed-u-ca-tion", "ed-u-CA-tion", "ED-u-ca-tion"],
+                answer: 1
+            }
+
+        ];
+
+        const englishSs2Questions = [
+            // LEXIS
+            {
+                instruction: "Choose the option that is correctly punctuate(d)",
+                q: "Which of the following sentences uses the semicolon correctly? ",
+                options: ["I have a big exam tomorrow; so I must study.", "The rain stopped; the sun came out.", "We bought; apples, oranges, and pears.", "She was tired; because she walked home."],
+                answer: 1
+            },
+
+            {
+                instruction: "Choose the option that is correctly punctuate(d)",
+                q: "Identify the sentence with the correct use of the apostrophe.",
+                options: [
+                    "The three boys's bags were stolen from the locker.",
+                    "The three boy's bags were stolen from the locker.",
+                    "The three boys bags' were stolen from the locker.",
+                    "The three boys' bags were stolen from the locker."
+                ],
+                answer: 3
+            },
+            {
+                instruction: "Choose the option that is correctly punctuate(d)",
+                q: "Which sentence uses a dash correctly to show a sudden break in thought?",
+                options: [
+                    "I was thinking—but it doesn't matter now.",
+                    "He—is a very—good man.",
+                    "The cake—was delicious—and sweet.",
+                    "Stop—don't go there!"
+                ],
+                answer: 3
+            },
+            {
+                instruction: "Choose the option that is correctly punctuate(d)",
+                q: "Where should the full stop be placed in the following abbreviation?",
+                options: [
+                    "Mrs. Jones",
+                    "Ph.D",
+                    "O.A.U",
+                    "10.00am"
+                ],
+                answer: 3
+            },
+            {
+                instruction: "Choose the option that is correctly punctuate(d)",
+                q: "Choose the correctly punctuated sentence regarding possession.",
+                options: [
+                    "This is its' tail.",
+                    "This is its tail.",
+                    "This is it's tail.",
+                    "This is its's tail."
+                ],
+                answer: 0
+            },
+            {
+                instruction: "Choose the option that is correctly punctuate(d)",
+                q: "Select the sentence that uses a semicolon to separate items in a complex list.",
+                options: [
+                    "We visited Lagos, Nigeria; Accra, Ghana; and Lome, Togo.",
+                    "We visited Lagos; Nigeria, Accra; Ghana, and Lome; Togo.",
+                    "We visited Lagos, Nigeria, Accra, Ghana, and Lome, Togo.",
+                    "We visited Lagos; Nigeria; Accra; Ghana; and Lome; Togo."
+                ],
+                answer: 3
+            },
+            {
+                instruction: "Choose the option that is correctly punctuate(d)",
+                q: "Which of these is a correct use of the dash for emphasis?",
+                options: [
+                    "He had only one goal—success.",
+                    "He—had only—one goal success.",
+                    "He had—only one goal—success.",
+                    "He had only one goal—success."
+                ],
+                answer: 0
+            },
+            {
+                q: "\"It's a long way to the village.\" In this sentence, the apostrophe is used for:",
+                options: [
+                    "Possession",
+                    "Pluralization",
+                    "Contraction",
+                    "Omission of a consonant"
+                ],
+                answer: 2
+            },
+            {
+                q: "Identify the error in this sentence: \"The womens' association met yesterday.\"",
+                options: [
+                    "The full stop is missing.",
+                    "The apostrophe is misplaced",
+                    "The word \"association\" should be capitalized",
+                    "No error."
+                ],
+                answer: 1
+            },
+            {
+                q: "The full stop is also known as a:",
+                options: [
+                    "Comma",
+                    "Period",
+                    "Colon",
+                    "Hyphen"
+                ],
+                answer: 1
+            },
+
+            {
+                q: " __________ is being painted",
+                options: [
+                    "The teachers's lounge",
+                    "The teacher's lounge",
+                    "The teachers' lounge",
+                    "The teachers lounge'"
+                ],
+                answer: 2
+            },
+            {
+                q: "He wanted to go to the party__________ he had no money.",
+                options: [
+                    "however",
+                    "how ever",
+                    "howevers",
+                    "However"
+                ],
+                answer: 0
+            },
+            {
+                q: "She said she would __________ she forgot.",
+                options: [
+                    "call; but",
+                    "call—but",
+                    "call, but",
+                    "call: but"
+                ],
+                answer: 2
+            },
+            {
+                q: "__________ coming to the dinner tonight?",
+                options: [
+                    "Who's",
+                    "Whose",
+                    "Whose'",
+                    "Who's'"
+                ],
+                answer: 0
+            },
+            {
+                q: "The __________ car is parked outside.",
+                options: [
+                    "bosses’",
+                    "boss'",
+                    "boss",
+                    "bos’s"
+                ],
+                answer: 1
+            },
+            {
+                q: "I feel so much regret; I wish I could ________.",
+                options: [
+                    "turn back the hand of time",
+                    "turn back the clock",
+                    "reverse the time",
+                    "turn the clock backward"
+                ],
+                answer: 1
+            },
+            {
+                q: "In a tough competition, you often have to ________.",
+                options: [
+                    "fight fire for fire",
+                    "fight fire with fire",
+                    "throw fire for fire",
+                    "exchange fire for fire"
+                ],
+                answer: 1
+            },
+            {
+                q: "We pray that our parents live long to reap the ________ of their labour.",
+                options: [
+                    "fruit",
+                    "fruitions",
+                    "fruits",
+                    "harvest"
+                ],
+                answer: 2
+            },
+            {
+                q: "The young musician is described by critics as an ________ artiste.",
+                options: [
+                    "upcoming",
+                    "up and coming",
+                    "on-coming",
+                    "about-to-come"
+                ],
+                answer: 1
+            },
+            {
+                q: "\"Birds of ________ flock together.\"",
+                options: [
+                    "bed of the same feather",
+                    "a feather",
+                    "similar wing",
+                    "the same feather"
+                ],
+                answer: 1
+            },
+            {
+                q: "It is often said that it is \"better the devil you know than the ________.\"",
+                options: [
+                    "angel you don’t know",
+                    "devil you don't",
+                    "demon you don't know",
+                    "friend you don't"
+                ],
+                answer: 1
+            },
+            {
+                q: "You have already spent your savings; you cannot ________.",
+                options: [
+                    "eat your cake and have it",
+                    "have your cake and eat it",
+                    "eat the cake and keep it",
+                    "want your cake and eat it"
+                ],
+                answer: 1
+            },
+            {
+                q: "If the new rule applies to the teachers, it must apply to the students too, because what is sauce for the goose is ________.",
+                options: [
+                    "good for the gander",
+                    "sauce for the gander",
+                    "spice for the gander",
+                    "source for the gander"
+                ],
+                answer: 1
+            },
+
+
+            {
+                q: "The opportunity won't last forever; you must ________.",
+                options: [
+                    "make haste while the sun shines",
+                    "make hay while the sun shines",
+                    "make hay when the sun is out",
+                    "do hay while the sun shines"
+                ],
+                answer: 1
+            },
+            {
+                q: "I saw them in the corner having a ________ about the party.",
+                options: [
+                    "gist",
+                    "chit-chat",
+                    "gossip",
+                    "talk-talk"
+                ],
+                answer: 1
+            },
+            {
+                q: "Most people admire the actress not just for her talent, but for her ________.",
+                options: [
+                    "look",
+                    "looks",
+                    "looking",
+                    "appearance"
+                ],
+                answer: 1
+            },
+            {
+                q: "She tried to ________ her way into the manager’s office.",
+                options: [
+                    "smoothen",
+                    "smooth",
+                    "smote",
+                    "smoothy"
+                ],
+                answer: 0
+            },
+            {
+                q: "The toddler fell asleep while sitting on her mother's ________.",
+                options: [
+                    "laps",
+                    "lap",
+                    "knees",
+                    "thigh"
+                ],
+                answer: 1
+            },
+            {
+                q: "After years of hard work, he has finally become a successful ________.",
+                options: [
+                    "goal getter",
+                    "go-getter",
+                    "gold getter",
+                    "go-getting"
+                ],
+                answer: 1
+            },
+            {
+                q: "My mother always smells nice because she wears expensive ________.",
+                options: [
+                    "sprays",
+                    "perfumes",
+                    "smellings",
+                    "scents"
+                ],
+                answer: 1
+            },
+
+            //   COMPOSITION
+            {
+                q: "A communique is primarily used to _________.",
+                options: [
+                    "invite members to a future meeting",
+                    "record every word spoken during a deliberation",
+                    "summarize the resolutions and decisions of a meeting",
+                    "list the names of all attendees at a social event"
+                ],
+                answer: 2
+            },
+            {
+                q: "Which of the following is a major difference between a \"Minute of a Meeting\" and a \"Communique\"?",
+                options: [
+                    "Minutes are formal, while communiques are informal.",
+                    "Minutes are for internal records, while a communique is for public consumption.",
+                    "Only minutes require a date.",
+                    "Communiques are written before the meeting starts."
+                ],
+                answer: 1
+            },
+            {
+                q: "The tone of a communique is usually _________.",
+                options: [
+                    "argumentative and loud",
+                    "poetic and descriptive",
+                    "formal, objective, and authoritative",
+                    "biased and emotional"
+                ],
+                answer: 2
+            },
+            {
+                q: "A communique is issued \"jointly\" when _________.",
+                options: [
+                    "only one person signs it",
+                    "it is written in a secret language",
+                    "two or more parties or organizations agree on the contents",
+                    "it is a draft that hasn't been approved yet"
+                ],
+                answer: 2
+            },
+            {
+                q: "Which of these would most likely be the title of a communique?",
+                options: [
+                    "My Trip to the African Union Summit",
+                    "Minutes of the 5th Board Meeting",
+                    "Communique Issued at the End of the 3-Day ECOWAS Summit in Abuja",
+                    "An Open Letter to the President"
+                ],
+                answer: 2
+            },
+            {
+                q: "In a communique, the \"Preamble\" usually contains _________.",
+                options: [
+                    "the final signatures of the leaders",
+                    "the background, date, venue, and purpose of the meeting",
+                    "a list of people and decision at the conference",
+                    "the names of the journalists present"
+                ],
+                answer: 1
+            },
+            {
+                q: "The phrase \"The assembly resolved that...\" is common in a communique. What does \"resolved\" mean in this context?",
+                options: [
+                    "Asked a question",
+                    "Formally decided",
+                    "Disagreed",
+                    "Postponed the matter"
+                ],
+                answer: 1
+            },
+            {
+                q: "Where is the date of the meeting usually placed in a communique?",
+                options: [
+                    "Only in the signature block",
+                    "In the preamble or the heading",
+                    "It is never included",
+                    "In a post-script (P.S.)"
+                ],
+                answer: 1
+            },
+            {
+                q: "Who is responsible for signing a communique?",
+                options: [
+                    "Any person passing by the venue",
+                    "Only the youngest member of the group",
+                    "Authorized representatives or leaders of the participating groups",
+                    "The printer who published the document"
+                ],
+                answer: 2
+            },
+            {
+                q: "A communique usually ends with _________.",
+                options: [
+                    "a list of apologies for absence",
+                    "a vote of thanks and the signatures of the key stakeholders",
+                    "a table of contents",
+                    "the personal address of the secretary"
+                ],
+                answer: 1
+            },
+
+            //   PHONETICS
+
+            {
+                q: "Which of the following words contains the short vowel sound /ɪ/?",
+                options: [
+                    "Team",
+                    "Sit",
+                    "Rice",
+                    "Seat"
+                ],
+                answer: 1
+            },
+            {
+                q: "Identify the word with the /æ/ sound.",
+                options: [
+                    "Father",
+                    "Ball",
+                    "Cat",
+                    "Gate"
+                ],
+                answer: 2
+            },
+            {
+                q: "The phonetic symbol /uː/ is found in which word?",
+                options: [
+                    "Foot",
+                    "Book",
+                    "Blue",
+                    "Blood"
+                ],
+                answer: 2
+            },
+            {
+                q: "Which word contains the schwa sound /ə/?",
+                options: [
+                    "Teacher",
+                    "Bird",
+                    "Card",
+                    "Pen"
+                ],
+                answer: 0
+            },
+            {
+                q: "In the word \"Heart,\" the vowel sound is represented by:",
+                options: [
+                    "/æ/",
+                    "/ɔː/",
+                    "/ɑː/",
+                    "/ʌ/"
+                ],
+                answer: 2
+            },
+            {
+                q: "The sound /eɪ/ is present in:",
+                options: [
+                    "Rain",
+                    "Car",
+                    "Meet",
+                    "High"
+                ],
+                answer: 0
+            },
+            {
+                q: "Identify the diphthong in the word \"Home.\"",
+                options: [
+                    "/aʊ/",
+                    "/əʊ/",
+                    "/ɔɪ/",
+                    "/ɪə/"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which word features the sound /eə/?",
+                options: [
+                    "Ear",
+                    "Air",
+                    "Here",
+                    "Are"
+                ],
+                answer: 1
+            },
+            {
+                q: "The word \"Cure\" contains which diphthong?",
+                options: [
+                    "/ʊə/",
+                    "/ɪə/",
+                    "/ɔɪ/",
+                    "/aɪ/"
+                ],
+                answer: 0
+            },
+            {
+                q: "Which of these is NOT a diphthong?",
+                options: [
+                    "/ɔɪ/",
+                    "/aʊ/",
+                    "/iː/",
+                    "/eɪ/"
+                ],
+                answer: 2
+            },
+            {
+                q: "The sound /ɔɪ/ is found in:",
+                options: [
+                    "Cow",
+                    "Coin",
+                    "Cone",
+                    "Corn"
+                ],
+                answer: 1
+            },
+            {
+                q: "\"Shout\" and \"Town\" share which diphthong?",
+                options: [
+                    "/əʊ/",
+                    "/aʊ/",
+                    "/uː/",
+                    "/ɔː/"
+                ],
+                answer: 1
+            },
+
+            {
+                q: "A diphthong is also known as a:",
+                options: [
+                    "Pure vowel",
+                    "Vowel glide",
+                    "Consonant cluster",
+                    "Nasal sound"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which word contains /ɪə/?",
+                options: [
+                    "Hair",
+                    "Beer",
+                    "Bear",
+                    "Pear"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which of these is a voiceless plosive?",
+                options: [
+                    "/b/",
+                    "/g/",
+                    "/p/",
+                    "/d/"
+                ],
+                answer: 2
+            },
+            {
+                q: "The sound /θ/ is found in:",
+                options: [
+                    "This",
+                    "Think",
+                    "Then",
+                    "There"
+                ],
+                answer: 1
+            },
+            {
+                q: "Identify the word with the /tʃ/ sound.",
+                options: [
+                    "Character",
+                    "Church",
+                    "Chemist",
+                    "Chorus"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which word ends with the /ŋ/ sound?",
+                options: [
+                    "Sun",
+                    "Sin",
+                    "Sing",
+                    "Slim"
+                ],
+                answer: 2
+            },
+            {
+                q: "The consonant in \"Photo\" is phonetically:",
+                options: [
+                    "/p/",
+                    "/v/",
+                    "/f/",
+                    "/b/"
+                ],
+                answer: 2
+            },
+            {
+                q: "Which of these is a nasal consonant?",
+                options: [
+                    "/s/",
+                    "/m/",
+                    "/t/",
+                    "/k/"
+                ],
+                answer: 1
+            },
+            {
+                q: "The \"j\" in \"Judge\" is represented by:",
+                options: [
+                    "/ʒ/",
+                    "/z/",
+                    "/dʒ/",
+                    "/j/"
+                ],
+                answer: 2
+            },
+            {
+                q: "Which word contains a silent consonant?",
+                options: [
+                    "Lamb",
+                    "Lamp",
+                    "Lift",
+                    "Loud"
+                ],
+                answer: 0
+            },
+            {
+                q: "The sound /ð/ is:",
+                options: [
+                    "Voiceless dental",
+                    "Voiced dental",
+                    "Voiced alveolar",
+                    "Voiceless palatal"
+                ],
+                answer: 2
+            },
+            {
+                q: "Select the word with the /ʃ/ sound.",
+                options: [
+                    "Vision",
+                    "Sugar",
+                    "Sea",
+                    "Zero"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which of the following words contains the short vowel sound /ɪ/?",
+                options: [
+                    "Team",
+                    "Sit",
+                    "Rice",
+                    "Seat"
+                ],
+                answer: 1
+            },
+            {
+                q: "Identify the word with the /æ/ sound.",
+                options: [
+                    "Father",
+                    "Ball",
+                    "Cat",
+                    "Gate"
+                ],
+                answer: 2
+            },
+            {
+                q: "The phonetic symbol /uː/ is found in which word?",
+                options: [
+                    "Foot",
+                    "Book",
+                    "Blue",
+                    "Blood"
+                ],
+                answer: 2
+            },
+            {
+                q: "Which word contains the schwa sound /ə/?",
+                options: [
+                    "Teacher",
+                    "Bird",
+                    "Card",
+                    "Pen"
+                ],
+                answer: 0
+            },
+            {
+                q: "In the word \"Heart,\" the vowel sound is represented by:",
+                options: [
+                    "/æ/",
+                    "/ɔː/",
+                    "/ɑː/",
+                    "/ʌ/"
+                ],
+                answer: 2
+            },
+            {
+                q: "Select the word that has a different vowel sound from the others:",
+                options: [
+                    "Pot",
+                    "Dog",
+                    "Hot",
+                    "Port"
+                ],
+                answer: 3
+            },
+            {
+                q: "The vowel sound in \"Sun\" is:",
+                options: [
+                    "/ʊ/",
+                    "/ʌ/",
+                    "/ɔː/",
+                    "/uː/"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which of these is a long monophthong?",
+                options: [
+                    "/e/",
+                    "/ɒ/",
+                    "/iː/",
+                    "/ɪ/"
+                ],
+                answer: 2
+            },
+            {
+                q: "The word \"Girl\" contains the vowel sound:",
+                options: [
+                    "/ɜː/",
+                    "/e/",
+                    "/æ/",
+                    "/ɪ/"
+                ],
+                answer: 0
+            },
+            {
+                q: "How many monophthongs are there in the English sound system?",
+                options: [
+                    "8",
+                    "12",
+                    "20",
+                    "5"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which word contains the diphthong /aɪ/?",
+                options: [
+                    "Boy",
+                    "Sky",
+                    "Say",
+                    "See"
+                ],
+                answer: 1
+            },
+            {
+                q: "The sound /eɪ/ is present in:",
+                options: [
+                    "Rain",
+                    "Car",
+                    "Meet",
+                    "High"
+                ],
+                answer: 0
+            },
+            {
+                q: "Identify the diphthong in the word \"Home.\"",
+                options: [
+                    "/aʊ/",
+                    "/əʊ/",
+                    "/ɔɪ/",
+                    "/ɪə/"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which word features the sound /eə/?",
+                options: [
+                    "Ear",
+                    "Air",
+                    "Here",
+                    "Are"
+                ],
+                answer: 1
+            },
+            {
+                q: "The word \"Cure\" contains which diphthong?",
+                options: [
+                    "/ʊə/",
+                    "/ɪə/",
+                    "/ɔɪ/",
+                    "/aɪ/"
+                ],
+                answer: 0
+            },
+            {
+                q: "Which of these is NOT a diphthong?",
+                options: [
+                    "/ɔɪ/",
+                    "/aʊ/",
+                    "/iː/",
+                    "/eɪ/"
+                ],
+                answer: 2
+            },
+            {
+                q: "The sound /ɔɪ/ is found in:",
+                options: [
+                    "Cow",
+                    "Coin",
+                    "Cone",
+                    "Corn"
+                ],
+                answer: 1
+            },
+            {
+                q: "\"Shout\" and \"Town\" share which diphthong?",
+                options: [
+                    "/əʊ/",
+                    "/aʊ/",
+                    "/uː/",
+                    "/ɔː/"
+                ],
+                answer: 1
+            },
+            {
+                q: "A diphthong is also known as a:",
+                options: [
+                    "Pure vowel",
+                    "Vowel glide",
+                    "Consonant cluster",
+                    "Nasal sound"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which word contains /ɪə/?",
+                options: [
+                    "Hair",
+                    "Beer",
+                    "Bear",
+                    "Pear"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which of these is a voiceless plosive?",
+                options: [
+                    "/b/",
+                    "/g/",
+                    "/p/",
+                    "/d/"
+                ],
+                answer: 2
+            },
+            {
+                q: "The sound /θ/ is found in:",
+                options: [
+                    "This",
+                    "Think",
+                    "Then",
+                    "There"
+                ],
+                answer: 1
+            },
+            {
+                q: "Identify the word with the /tʃ/ sound.",
+                options: [
+                    "Character",
+                    "Church",
+                    "Chemist",
+                    "Chorus"
+                ],
+                answer: 1
+            },
+            {
+                q: "Which word ends with the /ŋ/ sound?",
+                options: [
+                    "Sun",
+                    "Sin",
+                    "Sing",
+                    "Slim"
+                ],
+                answer: 2
+            },
+            {
+                q: "The consonant in \"Photo\" is phonetically:",
+                options: [
+                    "/p/",
+                    "/v/",
+                    "/f/",
+                    "/b/"
+                ],
+                answer: 2
+            },
+            {
+                q: "Which of these is a nasal consonant?",
+                options: [
+                    "/s/",
+                    "/m/",
+                    "/t/",
+                    "/k/"
+                ],
+                answer: 1
+            }
+        ];
+
+
+
+
+
+        let questions = [];
+        let currentQuestion = 0;
+        let answers = {};
+        let studentName = "";
+        let studentClass = "";
+        let studentSubject = "";
+        let timeLeft = 3600; //  50mins in seconds
+        let timerInterval;
+
+        function getRandomQuestions(questions, number) {
+            const shuffled = [...questions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, number);
+        }
+
+        function startExam() {
+            const nameInput = document.getElementById("studentName").value.trim();
+            if (!nameInput) {
+                alert("Please enter your name to start the exam.");
+                return;
+            }
+
+            const classInput = document.getElementById("studentClass").value.trim();
+            if (!classInput) {
+                alert("Please enter your class");
+                return;
+            }
+            studentName = nameInput;
+            studentClass = classInput;
+            studentSubject = document.getElementById('subject').value
+
+            if (studentSubject === 'English-SS1') {
+                questions = englishSs1Questions;
+
+            }
+            else if (studentSubject === 'English-SS2-SS3') {
+                questions = englishSs2Questions;
+            }
+            document.getElementById("loginPage").classList.add("hidden");
+            document.getElementById("examScreen").classList.remove("hidden");
+
+            questions = getRandomQuestions(questions, 100);
+            currentQuestion = 0;
+            answers = {};
+            buildQuestionNav();
+            showQuestion();
+            startTimer();
+        }
+
+        function startTimer() {
+            updateTimer();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Time is up! Exam has been submitted.");
+                    submitExam();
+                }
+            }, 800);
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("timer").innerText = `Time Left: ${minutes}m ${seconds}s`;
+        }
+
+        function showQuestion() {
+
+            const q = questions[currentQuestion];
+            const container = document.getElementById("questionContainer");
+
+            // Build question container with instruction on top (inside the same container)
+            let html = `
+        <div class="title">
+            <h2>${studentName}_${studentClass}_${studentSubject} EXAM</h2>
+        </div>
+
+        <div class="question">
+            ${q.instruction ? `<p style="font-weight:italic; font-style:italic;color:#444;">${q.instruction}</p>` : ""}
+            <h3>${q.q}</h3>
+    `;
+
+            q.options.forEach((opt, index) => {
+                const checked = answers[currentQuestion] === index ? "checked" : "";
+                html += `
+            <label>
+                <input type="radio" name="q${currentQuestion}" value="${index}" ${checked}>
+                ${String.fromCharCode(65 + index)}. ${opt}
+            </label><br>
+        `;
+            });
+
+            html += `</div>`;
+            container.innerHTML = html;
+
+            updateQuestionNav();
+        }
+
+
+        function nextQuestion() {
+            saveAnswer();
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                showQuestion();
+            } else {
+                alert("You are on the last question.");
+            }
+        }
+
+        function prevQuestion() {
+            saveAnswer();
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion();
+            } else {
+                alert("You are on the first question.");
+            }
+        }
+
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name='q${currentQuestion}']:checked`);
+            if (selected) {
+                answers[currentQuestion] = parseInt(selected.value);
+            }
+        }
+        function buildQuestionNav() {
+            const nav = document.getElementById("questionNav");
+            nav.innerHTML = "";
+
+            for (let i = 0; i < questions.length; i++) {
+                const div = document.createElement("div");
+                div.className = "question-box";
+                div.innerText = i + 1;
+                div.onclick = () => {
+                    saveAnswer();
+                    currentQuestion = i;
+                    showQuestion();
+                    updateQuestionNav();
+                };
+                nav.appendChild(div);
+            }
+        }
+
+        function updateQuestionNav() {
+            const boxes = document.querySelectorAll(".question-box");
+
+            boxes.forEach((box, index) => {
+                box.classList.remove("active");
+                box.classList.remove("answered");
+
+                if (index === currentQuestion) {
+                    box.classList.add("active");
+                }
+
+                if (answers[index] !== undefined) {
+                    box.classList.add("answered");
+                }
+            });
+        }
+
+        function submitExam() {
+            if (!confirm("Are you sure you want to submit your exam?")) {
+                return;
+            }
+
+            saveAnswer();
+            clearInterval(timerInterval);
+
+            let score = 0;
+            questions.forEach((q, i) => {
+                if (answers[i] === q.answer) score++;
+            });
+
+            const percent = (score / questions.length) * 100;
+
+            document.getElementById("rName").innerHTML = studentName;
+            document.getElementById("rScore").innerHTML = score;
+            document.getElementById("rClass").innerHTML = studentClass;
+            document.getElementById("rSubject").innerHTML = studentSubject;
+            document.getElementById("rPercent").innerHTML = ((score / questions.length) * 100).toFixed(2) + "%";
+            ;
+
+
+            document.getElementById("examScreen").classList.add("hidden");
+            document.getElementById("resultScreen").classList.remove("hidden");
+
+        }
+
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({
+                orientation: 'l',
+                unit: 'mm',
+                format: [220, 170]
+            });
+            // width*height
+
+
+            const img = new Image();
+            img.src = "LOGO.png";
+
+            // Wait for image to load or fail
+            await new Promise(resolve => {
+                img.onload = () => resolve();
+                img.onerror = () => resolve();
+            });
+
+            // Add logo if loaded
+            if (img.complete && img.naturalHeight !== 0) {
+                doc.addImage(img, "PNG", 15, 10, 30, 30);
+            }
+
+            generateContent(doc);
+        }
+
+        function generateContent(doc) {
+            // HEADER
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(20);
+            doc.setTextColor(128, 0, 32); // burgurdy
+            doc.text("AL-QOSIMIYYAH MODEL SCHOOL", 105, 25, { align: "center" });
+
+            doc.setFontSize(16);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`${studentSubject} RESULT`, 105, 35, { align: "center" });
+
+            // SCORE CALCULATION
+            let score = 0;
+            questions.forEach((q, i) => { if (answers[i] === q.answer) score++; });
+            const percent = ((score / questions.length) * 100).toFixed(2);
+
+            // RESULT TABLE
+            const tableData = [
+                ["Student Name", studentName],
+                ["Student Class", studentClass],
+                ["Student Subject", studentSubject],
+                ["Score", `${score} / ${questions.length}`],
+                ["Percentage", `${percent}%`],
+                ["Date", new Date().toLocaleString()]
+            ];
+
+            doc.autoTable({
+                head: [["ID", "Details"]],
+                body: tableData,
+                startY: 50,
+                theme: "grid",
+
+                headStyles: {
+                    fillColor: [128, 0, 32],
+                    textColor: 255,
+                    fontStyle: "bold"
+                },
+                styles: {
+                    fontSize: 16,
+                    textColor: [0, 0, 0]
+                },
+                columnStyles: {
+                    0: { fontStyle: "bold", cellWidth: 60 },
+                    1: { cellWidth: 110 }
+                }
+            });
+
+
+
+            // COPYRIGHT
+            doc.setFontSize(11);
+            doc.setTextColor(0, 0, 0);
+            doc.text("© 2026 Horlanif Tech. All Rights Reserved.", 105, 150, { align: "center" });
+
+            // SAVE PDF
+            doc.save(`${studentName.replace(/\s+/g, '_')}_${studentClass.replace(/\s+/g, '_')}_${studentSubject.replace(/\s+/g, '_')}_Result.pdf`);
+        }
+    </script>
+
+
+    </script>
+</body>
+
+</html>
