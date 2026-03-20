@@ -6,6 +6,7 @@
    padding: 0;
    min-height: 100vh;
    user-select: none;
+   box-sizing: border-box;
  }
 
 .login-page{
@@ -162,17 +163,20 @@ font-size: 20px;
 
  table {
    width: 100%;
+   table-layout: fixed;
  }
 
  th{
   font-size: 18px;
   text-transform: uppercase;
   color: black;
+  word-wrap: break-word;
  }
 
  td{
   color: black;
   font-weight: 400;
+  word-wrap: break-word;
  }
 
  table,
@@ -181,8 +185,15 @@ font-size: 20px;
    border-collapse: collapse;
    text-align: center;
 
-
  }
+  @media (max-width: 600px) {
+  th, td {
+    font-size: 10px;
+    padding: 5px;
+  }
+} 
+
+
 
  .question-nav {
    display: flex;
